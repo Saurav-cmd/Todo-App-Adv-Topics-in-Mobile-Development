@@ -22,9 +22,9 @@ const App = () => {
   const addTask = async () => {
     if (newTaskTitle.trim() !== '') {
       try {
-        const newTask = { description: newTaskTitle, done: false }; // No need for id here
+        const newTask = { description: newTaskTitle, done: false };
         const newTaskId = await saveDB(newTask.description, newTask.done);
-        setTasks([...tasks, { ...newTask, id: newTaskId }]); // Use the generated id
+        setTasks([...tasks, { ...newTask, id: newTaskId }]);
         setNewTaskTitle('');
       } catch (error) {
         console.error("Error adding task: ", error);
