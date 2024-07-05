@@ -4,11 +4,11 @@ import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 const Task = ({ task, onToggle, onDelete }) => {
   return (
     <View style={styles.taskContainer}>
-      <Text style={[styles.taskText, task.isDone && styles.taskTextDone]}>
-        {task.title}
+      <Text style={[styles.taskText, task.done && styles.taskTextDone]}>
+        {task.description}
       </Text>
       <Switch
-        value={task.isDone}
+        value={task.done}
         onValueChange={() => onToggle(task.id)}
         style={styles.switch}
       />

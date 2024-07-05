@@ -1,24 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, ScrollView, StyleSheet } from 'react-native';
 import Task from './Task/Task';
+import { loadDB, saveDB, updateDB, deleteDataDB } from './database/index';
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
-  const addTask = () => {
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const tasksList = await loadDB();
+        setTasks(tasksList);
+      } catch (error) {
+        console.error("Error loading tasks: ", error);
+      }
+    };
+    loadTasks();
+  }, []);
+
+  const addTask = async () => {
     if (newTaskTitle.trim() !== '') {
-      setTasks([...tasks, { id: tasks.length + 1, title: newTaskTitle, isDone: false }]);
-      setNewTaskTitle('');
+      try {
+        const newTask = { id: Date.now().toString(), description: newTaskTitle, done: false }; // Ensure unique ID
+        await saveDB(newTask.id, newTask.description, newTask.done);
+        setTasks([...tasks, newTask]);
+        setNewTaskTitle('');
+      } catch (error) {
+        console.error("Error adding task: ", error);
+      }
     }
   };
 
-  const toggleTaskStatus = (id) => {
-    setTasks(tasks.map(task => task.id === id ? { ...task, isDone: !task.isDone } : task));
+  const toggleTaskStatus = async (id) => {
+    // Find the task to toggle
+    const taskToUpdate = tasks.find(task => task.id === id);
+    if (!taskToUpdate) return;
+
+    const updatedTasks = tasks.map(task =>
+      task.id === id ? { ...task, done: !task.done } : task
+    );
+    setTasks(updatedTasks);
+
+    try {
+      await updateDB(id, !taskToUpdate.done);
+    } catch (error) {
+      console.error("Error toggling task status: ", error);
+      // Revert the change if there's an error
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, done: !task.done } : task
+      ));
+    }
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+  const deleteTask = async (id) => {
+    try {
+      await deleteDataDB(id);
+      setTasks(tasks.filter(task => task.id !== id));
+    } catch (error) {
+      console.error("Error deleting task: ", error);
+    }
   };
 
   return (
