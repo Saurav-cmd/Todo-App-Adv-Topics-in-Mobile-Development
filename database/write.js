@@ -9,7 +9,7 @@ export async function saveDB(description, done) {
             done: done,
         });
         console.log('Success:', docRef);
-        return docRef.id; // Return the generated document ID
+        return docRef.id;
     } catch (error) {
         console.error('Error:', error);
         throw error;
