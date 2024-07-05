@@ -22,9 +22,9 @@ const App = () => {
   const addTask = async () => {
     if (newTaskTitle.trim() !== '') {
       try {
-        const newTask = { id: Date.now().toString(), description: newTaskTitle, done: false }; // Ensure unique ID
-        await saveDB(newTask.id, newTask.description, newTask.done);
-        setTasks([...tasks, newTask]);
+        const newTask = { description: newTaskTitle, done: false }; // No need for id here
+        const newTaskId = await saveDB(newTask.description, newTask.done);
+        setTasks([...tasks, { ...newTask, id: newTaskId }]); // Use the generated id
         setNewTaskTitle('');
       } catch (error) {
         console.error("Error adding task: ", error);
@@ -33,7 +33,6 @@ const App = () => {
   };
 
   const toggleTaskStatus = async (id) => {
-    // Find the task to toggle
     const taskToUpdate = tasks.find(task => task.id === id);
     if (!taskToUpdate) return;
 
@@ -46,7 +45,6 @@ const App = () => {
       await updateDB(id, !taskToUpdate.done);
     } catch (error) {
       console.error("Error toggling task status: ", error);
-      // Revert the change if there's an error
       setTasks(tasks.map(task =>
         task.id === id ? { ...task, done: !task.done } : task
       ));
