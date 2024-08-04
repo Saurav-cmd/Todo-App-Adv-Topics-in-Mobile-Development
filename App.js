@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -15,8 +14,28 @@ const Stack = createStackNavigator();
 function HomeStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="CabsList" component={CabsListScreen} />
-      <Stack.Screen name="CabDetail" component={CabDetailScreen} />
+      <Stack.Screen 
+        name="CabsList" 
+        component={CabsListScreen} 
+        options={{ headerTitle: 'Cabs List' }} // Add header title for CabsList
+      />
+      <Stack.Screen 
+        name="CabDetail" 
+        component={CabDetailScreen} 
+        options={{ headerTitle: 'Cab Detail' }} // Add header title for CabDetail
+      />
+    </Stack.Navigator>
+  );
+}
+
+function MyCabStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="MyCab" 
+        component={MyCabScreen} 
+        options={{ headerTitle: 'My Cabs' }} // Add header title for MyCab
+      />
     </Stack.Navigator>
   );
 }
@@ -33,15 +52,17 @@ function App() {
               tabBarIcon: ({ color, size }) => (
                 <Icon name="home" color={color} size={size} />
               ),
+              headerShown: false, // Hide the header for the Home tab
             }}
           />
           <Tab.Screen
             name="MyCab"
-            component={MyCabScreen}
+            component={MyCabStack}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <Icon name="car" color={color} size={size} />
               ),
+              headerShown: false, // Hide the header for the MyCab tab
             }}
           />
         </Tab.Navigator>

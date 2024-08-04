@@ -47,11 +47,11 @@ export async function fetchBookedCabsDetails(userId) {
     const cabsData = await Promise.all(
       bookedCabIds.map(async (cabId) => {
         const cabDocRef = doc(db, 'cabs', cabId);
-        const cabDoc = await getDoc(cabDocRef);  // Use getDoc for individual documents
+        const cabDoc = await getDoc(cabDocRef); 
         if (cabDoc.exists()) {
           return { id: cabId, ...cabDoc.data() };
         } else {
-          return { id: cabId, companyName: 'Unknown', model: 'Unknown' };  // Handle missing documents
+          return { id: cabId, companyName: 'Unknown', model: 'Unknown' }; 
         }
       })
     );
@@ -64,17 +64,16 @@ export async function fetchBookedCabsDetails(userId) {
 }
 
 
-export const handleCancelBooking = async (userId, cabId, setCabs) => {
+// Function to cancel booking
+export const handleCancelBooking = async (userId, cabId) => {
     try {
       const userDocRef = doc(db, 'users', userId);
   
       await updateDoc(userDocRef, {
         bookedCabs: arrayRemove(cabId),
       });
-  
-      // Remove the cab from the local state
-      setCabs(prevCabs => prevCabs.filter(cab => cab.id !== cabId));
-  
+      fetchCabs();
+      fetchUserBookedCabs(userId);
       Alert.alert('Success', 'Booking cancelled successfully!');
     } catch (error) {
       console.error('Error cancelling booking:', error);
